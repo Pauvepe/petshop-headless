@@ -47,8 +47,8 @@ export default function CartDrawer() {
         {/* Header */}
         <div className="flex items-center justify-between border-b px-4 py-4">
           <div className="flex items-center gap-2">
-            <h2 className="text-lg font-bold">Tu Carrito</h2>
-            <span className="rounded-full bg-emerald-100 px-2 py-0.5 text-xs font-medium text-emerald-700">
+            <h2 className="text-lg font-bold text-slate-900">Tu Carrito</h2>
+            <span className="rounded-full bg-[#ee9d2b]/10 px-2 py-0.5 text-xs font-medium text-[#ee9d2b]">
               {totalItems} {totalItems === 1 ? "artículo" : "artículos"}
             </span>
           </div>
@@ -65,10 +65,12 @@ export default function CartDrawer() {
         {items.length === 0 ? (
           <div className="flex flex-1 flex-col items-center justify-center gap-4 px-4">
             <ShoppingBag className="h-16 w-16 text-gray-300" />
-            <p className="text-lg font-medium text-gray-500">Tu carrito está vacío</p>
+            <p className="text-lg font-medium text-gray-500">
+              Tu carrito está vacío
+            </p>
             <button
               onClick={() => setIsOpen(false)}
-              className="rounded-lg bg-emerald-500 px-6 py-2 text-sm font-medium text-white transition-colors hover:bg-emerald-600"
+              className="rounded-lg bg-[#ee9d2b] px-6 py-2 text-sm font-medium text-white transition-colors hover:bg-[#ee9d2b]/90"
             >
               Seguir comprando
             </button>
@@ -81,17 +83,28 @@ export default function CartDrawer() {
                   const img = item.product.images?.[0]?.src;
                   const price = parseFloat(item.product.price || "0");
                   return (
-                    <li key={item.product.id} className="flex gap-3 rounded-lg border p-3">
+                    <li
+                      key={item.product.id}
+                      className="flex gap-3 rounded-lg border p-3"
+                    >
                       <div className="relative h-20 w-20 flex-shrink-0 overflow-hidden rounded-md bg-gray-100">
                         {img ? (
-                          <Image src={img} alt={item.product.name} fill sizes="80px" className="object-cover" />
+                          <Image
+                            src={img}
+                            alt={item.product.name}
+                            fill
+                            sizes="80px"
+                            className="object-cover"
+                          />
                         ) : (
-                          <div className="flex h-full w-full items-center justify-center text-xs text-gray-400">Sin img</div>
+                          <div className="flex h-full w-full items-center justify-center text-xs text-gray-400">
+                            Sin img
+                          </div>
                         )}
                       </div>
                       <div className="flex flex-1 flex-col justify-between">
                         <div className="flex items-start justify-between gap-2">
-                          <h3 className="text-sm font-medium leading-tight text-gray-900 line-clamp-2">
+                          <h3 className="line-clamp-2 text-sm font-medium leading-tight text-gray-900">
                             {item.product.name}
                           </h3>
                           <button
@@ -104,16 +117,28 @@ export default function CartDrawer() {
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-1">
                             <button
-                              onClick={() => updateQuantity(item.product.id, item.quantity - 1)}
+                              onClick={() =>
+                                updateQuantity(
+                                  item.product.id,
+                                  item.quantity - 1
+                                )
+                              }
                               disabled={item.quantity <= 1}
-                              className="rounded-md border p-1 text-gray-600 transition-colors hover:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-40"
+                              className="rounded-md border p-1 text-gray-600 transition-colors hover:bg-[#ee9d2b]/10 disabled:cursor-not-allowed disabled:opacity-40"
                             >
                               <Minus className="h-3.5 w-3.5" />
                             </button>
-                            <span className="w-8 text-center text-sm font-medium">{item.quantity}</span>
+                            <span className="w-8 text-center text-sm font-medium">
+                              {item.quantity}
+                            </span>
                             <button
-                              onClick={() => updateQuantity(item.product.id, item.quantity + 1)}
-                              className="rounded-md border p-1 text-gray-600 transition-colors hover:bg-gray-100"
+                              onClick={() =>
+                                updateQuantity(
+                                  item.product.id,
+                                  item.quantity + 1
+                                )
+                              }
+                              className="rounded-md border p-1 text-gray-600 transition-colors hover:bg-[#ee9d2b]/10"
                             >
                               <Plus className="h-3.5 w-3.5" />
                             </button>
@@ -129,23 +154,26 @@ export default function CartDrawer() {
               </ul>
             </div>
 
+            {/* Footer */}
             <div className="border-t px-4 py-4">
               <div className="mb-4 flex items-center justify-between">
                 <span className="text-sm text-gray-600">Total</span>
-                <span className="text-lg font-bold text-gray-900">{totalPrice.toFixed(2)} &euro;</span>
+                <span className="text-lg font-bold text-gray-900">
+                  {totalPrice.toFixed(2)} &euro;
+                </span>
               </div>
               <div className="flex flex-col gap-2">
                 <Link
                   href="/carrito"
                   onClick={() => setIsOpen(false)}
-                  className="block w-full rounded-lg border-2 border-emerald-500 py-2.5 text-center text-sm font-medium text-emerald-600 transition-colors hover:bg-emerald-50"
+                  className="block w-full rounded-lg border-2 border-[#ee9d2b] py-2.5 text-center text-sm font-medium text-[#ee9d2b] transition-colors hover:bg-[#ee9d2b]/10"
                 >
                   Ver Carrito
                 </Link>
                 <Link
                   href="/pago"
                   onClick={() => setIsOpen(false)}
-                  className="block w-full rounded-lg bg-emerald-500 py-2.5 text-center text-sm font-medium text-white transition-colors hover:bg-emerald-600"
+                  className="block w-full rounded-lg bg-[#ee9d2b] py-2.5 text-center text-sm font-medium text-white transition-colors hover:bg-[#ee9d2b]/90"
                 >
                   Finalizar Compra
                 </Link>

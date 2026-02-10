@@ -1,91 +1,70 @@
 "use client";
 
-import Image from "next/image";
+import Link from "next/link";
+import { Utensils, Gamepad2, Heart, Droplets, Shirt } from "lucide-react";
 
-interface Banner {
-  id: number;
-  title: string;
-  subtitle: string;
-  image: string;
-  className?: string;
-}
-
-const banners: Banner[] = [
+const categories = [
   {
-    id: 1,
-    title: "Alimentación Premium",
-    subtitle: "Lo mejor para tu mascota",
-    image: "https://picsum.photos/seed/banner1/600/600",
-    className: "aspect-square",
+    name: "Alimentación",
+    icon: Utensils,
+    bg: "bg-[#ee9d2b]/10",
+    hoverBg: "hover:bg-[#ee9d2b]",
+    link: "/categoria/perro",
   },
   {
-    id: 2,
-    title: "Accesorios Exclusivos",
-    subtitle: "Diseño y funcionalidad",
-    image: "https://picsum.photos/seed/banner2/600/600",
-    className: "aspect-square",
+    name: "Juguetes",
+    icon: Gamepad2,
+    bg: "bg-[#86b049]/10",
+    hoverBg: "hover:bg-[#86b049]",
+    link: "/categoria/gato",
   },
   {
-    id: 3,
-    title: "Envío gratis en pedidos +39€",
-    subtitle: "Recibe en 24-48h",
-    image: "https://picsum.photos/seed/banner3/1200/400",
-    className: "aspect-[3/1]",
+    name: "Salud",
+    icon: Heart,
+    bg: "bg-[#7c59a3]/10",
+    hoverBg: "hover:bg-[#7c59a3]",
+    link: "/categoria/aves",
+  },
+  {
+    name: "Higiene",
+    icon: Droplets,
+    bg: "bg-blue-100",
+    hoverBg: "hover:bg-blue-500",
+    link: "/categoria/roedores",
+  },
+  {
+    name: "Accesorios",
+    icon: Shirt,
+    bg: "bg-pink-100",
+    hoverBg: "hover:bg-pink-500",
+    link: "/categoria/peces-tortugas",
   },
 ];
 
 export default function BannerGrid() {
   return (
-    <section className="mx-4">
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-        {/* Top row: two square banners */}
-        {banners.slice(0, 2).map((banner) => (
-          <div
-            key={banner.id}
-            className="group relative overflow-hidden rounded-xl"
-          >
-            <div className={`relative ${banner.className}`}>
-              <Image
-                src={banner.image}
-                alt={banner.title}
-                fill
-                sizes="(max-width: 768px) 100vw, 50vw"
-                className="object-cover transition-transform duration-500 ease-out group-hover:scale-105"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-              <div className="absolute bottom-0 left-0 right-0 p-6">
-                <h3 className="text-xl font-bold text-white md:text-2xl">
-                  {banner.title}
-                </h3>
-                <p className="mt-1 text-sm text-white/80 md:text-base">
-                  {banner.subtitle}
-                </p>
+    <section className="container mx-auto px-4 py-12">
+      <h2 className="text-3xl font-extrabold text-slate-900 mb-10 text-center">
+        Categorías más buscadas
+      </h2>
+      <div className="grid grid-cols-2 md:grid-cols-5 gap-6">
+        {categories.map((cat) => {
+          const Icon = cat.icon;
+          return (
+            <Link
+              key={cat.name}
+              href={cat.link}
+              className="flex flex-col items-center group"
+            >
+              <div
+                className={`aspect-square rounded-full w-full flex items-center justify-center ${cat.bg} ${cat.hoverBg} transition-all duration-300 hover:scale-110 mb-4`}
+              >
+                <Icon className="w-12 h-12 text-slate-700 group-hover:text-white transition-colors duration-300" />
               </div>
-            </div>
-          </div>
-        ))}
-
-        {/* Bottom row: full-width rectangular banner */}
-        <div className="group relative overflow-hidden rounded-xl md:col-span-2">
-          <div className={`relative ${banners[2].className}`}>
-            <Image
-              src={banners[2].image}
-              alt={banners[2].title}
-              fill
-              sizes="100vw"
-              className="object-cover transition-transform duration-500 ease-out group-hover:scale-105"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-            <div className="absolute bottom-0 left-0 right-0 p-6">
-              <h3 className="text-2xl font-bold text-white md:text-3xl">
-                {banners[2].title}
-              </h3>
-              <p className="mt-1 text-sm text-white/80 md:text-base">
-                {banners[2].subtitle}
-              </p>
-            </div>
-          </div>
-        </div>
+              <p className="font-bold text-slate-700">{cat.name}</p>
+            </Link>
+          );
+        })}
       </div>
     </section>
   );

@@ -2,7 +2,19 @@
 
 import { useState, type FormEvent } from "react";
 import Link from "next/link";
-import { Dog, Cat, Bird, Rabbit, Turtle, Fish } from "lucide-react";
+import {
+  Dog,
+  Cat,
+  Bird,
+  Rabbit,
+  Turtle,
+  Fish,
+  PawPrint,
+  Facebook,
+  Camera,
+  Play,
+  Send,
+} from "lucide-react";
 
 const petOptions = [
   { id: "perro", label: "Perro", icon: Dog },
@@ -14,26 +26,30 @@ const petOptions = [
 ] as const;
 
 const categorias = [
-  { label: "Perro", slug: "perro" },
-  { label: "Gato", slug: "gato" },
+  { label: "Perros", slug: "perros" },
+  { label: "Gatos", slug: "gatos" },
   { label: "Aves", slug: "aves" },
   { label: "Roedores", slug: "roedores" },
-  { label: "Peces y tortugas", slug: "peces-y-tortugas" },
+  { label: "Peces & Tortugas", slug: "peces-y-tortugas" },
 ];
 
-const informacion = [
-  { label: "Sobre nosotros", href: "/sobre-nosotros" },
-  { label: "Contacto", href: "/contacto" },
+const servicioCliente = [
   { label: "Envíos", href: "/envios" },
+  { label: "Seguimiento de pedido", href: "/seguimiento" },
   { label: "Devoluciones", href: "/devoluciones" },
-  { label: "Política de privacidad", href: "/politica-de-privacidad" },
+  { label: "Preguntas frecuentes", href: "/faq" },
+  { label: "Contacto", href: "/contacto" },
+];
+
+const socialLinks = [
+  { icon: Facebook, label: "Facebook", href: "#" },
+  { icon: Camera, label: "Instagram", href: "#" },
+  { icon: Play, label: "YouTube", href: "#" },
 ];
 
 export default function Footer() {
   const [selectedPets, setSelectedPets] = useState<string[]>([]);
-  const [nombre, setNombre] = useState("");
   const [email, setEmail] = useState("");
-  const [aceptaPrivacidad, setAceptaPrivacidad] = useState(false);
   const [enviado, setEnviado] = useState(false);
 
   function togglePet(petId: string) {
@@ -47,51 +63,63 @@ export default function Footer() {
   function handleSubmit(e: FormEvent) {
     e.preventDefault();
 
-    if (selectedPets.length === 0 || !nombre || !email || !aceptaPrivacidad) {
-      return;
-    }
+    if (!email) return;
 
-    // Here you would send the data to your API
-    console.log({ nombre, email, selectedPets, aceptaPrivacidad });
+    console.log({ email, selectedPets });
 
     setEnviado(true);
-    setNombre("");
     setEmail("");
     setSelectedPets([]);
-    setAceptaPrivacidad(false);
 
     setTimeout(() => setEnviado(false), 4000);
   }
 
   return (
-    <footer className="bg-gray-900 text-white">
-      {/* Top section */}
-      <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-4">
-          {/* Column 1 - Brand */}
+    <footer className="bg-[#0f4c5c] text-white py-16">
+      <div className="max-w-7xl mx-auto px-4">
+        {/* Main grid */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
+          {/* Col 1 - Brand */}
           <div>
-            <Link href="/" className="inline-block">
-              <h2 className="text-2xl font-bold tracking-tight">
-                <span className="text-amber-400">Pet</span>Shop
-              </h2>
+            <Link href="/" className="inline-flex items-center gap-3">
+              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#ee9d2b]">
+                <PawPrint size={20} className="text-white" />
+              </div>
+              <h2 className="text-2xl font-bold tracking-tight">PetShop</h2>
             </Link>
-            <p className="mt-4 text-sm leading-relaxed text-gray-400">
+            <p className="mt-4 text-sm leading-relaxed text-white/60">
               Tu tienda de confianza para el cuidado de tus mascotas. Ofrecemos
               los mejores productos de alimentación, higiene, accesorios y mucho
-              más para que tus compañeros peludos, emplumados y escamosos estén
-              siempre felices y sanos.
+              más para que tus compañeros estén siempre felices y sanos.
             </p>
+
+            {/* Social icons */}
+            <div className="mt-6 flex items-center gap-3">
+              {socialLinks.map((social) => {
+                const Icon = social.icon;
+                return (
+                  <a
+                    key={social.label}
+                    href={social.href}
+                    aria-label={social.label}
+                    className="flex h-10 w-10 items-center justify-center rounded-full bg-white/10 transition-colors hover:bg-[#ee9d2b]"
+                  >
+                    <Icon size={18} />
+                  </a>
+                );
+              })}
+            </div>
           </div>
 
-          {/* Column 2 - Categorías */}
+          {/* Col 2 - Categorias */}
           <div>
-            <h3 className="text-lg font-semibold text-white">Categorías</h3>
-            <ul className="mt-4 space-y-2.5">
+            <h3 className="text-lg font-semibold">Categorías</h3>
+            <ul className="mt-4 space-y-3">
               {categorias.map((cat) => (
                 <li key={cat.slug}>
                   <Link
                     href={`/categoria/${cat.slug}`}
-                    className="text-sm text-gray-400 transition-colors hover:text-amber-400"
+                    className="text-sm text-white/60 transition-colors hover:text-[#ee9d2b]"
                   >
                     {cat.label}
                   </Link>
@@ -100,15 +128,15 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* Column 3 - Información */}
+          {/* Col 3 - Servicio al Cliente */}
           <div>
-            <h3 className="text-lg font-semibold text-white">Información</h3>
-            <ul className="mt-4 space-y-2.5">
-              {informacion.map((item) => (
+            <h3 className="text-lg font-semibold">Servicio al Cliente</h3>
+            <ul className="mt-4 space-y-3">
+              {servicioCliente.map((item) => (
                 <li key={item.href}>
                   <Link
                     href={item.href}
-                    className="text-sm text-gray-400 transition-colors hover:text-amber-400"
+                    className="text-sm text-white/60 transition-colors hover:text-[#ee9d2b]"
                   >
                     {item.label}
                   </Link>
@@ -117,109 +145,85 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* Column 4 - Newsletter */}
+          {/* Col 4 - Newsletter */}
           <div>
-            <h3 className="text-lg font-semibold text-white">Newsletter</h3>
-            <p className="mt-4 text-sm text-gray-400">
-              Selecciona tu(s) mascota(s) y recibe ofertas personalizadas.
+            <h3 className="text-lg font-semibold">Newsletter</h3>
+            <p className="mt-4 text-sm text-white/60">
+              Únete para recibir ofertas exclusivas
             </p>
 
-            <form onSubmit={handleSubmit} className="mt-4 space-y-4">
-              {/* Pet selection icons */}
-              <div className="flex flex-wrap gap-2">
-                {petOptions.map((pet) => {
-                  const Icon = pet.icon;
-                  const isSelected = selectedPets.includes(pet.id);
+            {/* Pet icon selector */}
+            <div className="mt-4 flex flex-wrap gap-2">
+              {petOptions.map((pet) => {
+                const Icon = pet.icon;
+                const isSelected = selectedPets.includes(pet.id);
 
-                  return (
-                    <button
-                      key={pet.id}
-                      type="button"
-                      onClick={() => togglePet(pet.id)}
-                      title={pet.label}
-                      className={`flex h-10 w-10 items-center justify-center rounded-full border-2 transition-all duration-200 ${
-                        isSelected
-                          ? "border-amber-400 bg-amber-400/20 text-amber-400"
-                          : "border-gray-600 text-gray-400 hover:border-gray-400 hover:text-gray-300"
-                      }`}
-                    >
-                      <Icon size={18} />
-                    </button>
-                  );
-                })}
-              </div>
-
-              {/* Nombre */}
-              <input
-                type="text"
-                placeholder="Nombre"
-                value={nombre}
-                onChange={(e) => setNombre(e.target.value)}
-                required
-                className="w-full rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-sm text-white placeholder-gray-500 outline-none transition-colors focus:border-amber-400 focus:ring-1 focus:ring-amber-400"
-              />
-
-              {/* Email */}
-              <input
-                type="email"
-                placeholder="Email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-                className="w-full rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-sm text-white placeholder-gray-500 outline-none transition-colors focus:border-amber-400 focus:ring-1 focus:ring-amber-400"
-              />
-
-              {/* Privacy checkbox */}
-              <label className="flex items-start gap-2 cursor-pointer">
-                <input
-                  type="checkbox"
-                  checked={aceptaPrivacidad}
-                  onChange={(e) => setAceptaPrivacidad(e.target.checked)}
-                  required
-                  className="mt-0.5 h-4 w-4 shrink-0 accent-amber-400 rounded"
-                />
-                <span className="text-xs text-gray-400">
-                  Acepto la{" "}
-                  <Link
-                    href="/politica-de-privacidad"
-                    className="text-amber-400 underline hover:text-amber-300"
+                return (
+                  <button
+                    key={pet.id}
+                    type="button"
+                    onClick={() => togglePet(pet.id)}
+                    title={pet.label}
+                    className={`flex h-12 w-12 items-center justify-center rounded-full transition-all duration-200 ${
+                      isSelected
+                        ? "bg-white/40 ring-2 ring-[#ee9d2b]"
+                        : "bg-white/20 hover:bg-white/40"
+                    }`}
                   >
-                    política de privacidad
-                  </Link>
-                </span>
-              </label>
+                    <Icon size={20} />
+                  </button>
+                );
+              })}
+            </div>
 
-              {/* Submit */}
-              <button
-                type="submit"
-                className="w-full rounded-lg bg-amber-400 px-4 py-2.5 text-sm font-semibold text-gray-900 transition-colors hover:bg-amber-300 disabled:opacity-50 disabled:cursor-not-allowed"
-                disabled={
-                  !nombre ||
-                  !email ||
-                  !aceptaPrivacidad ||
-                  selectedPets.length === 0
-                }
-              >
-                Suscribirse
-              </button>
+            {/* Email form */}
+            <form onSubmit={handleSubmit} className="mt-4">
+              <div className="flex items-center gap-2">
+                <input
+                  type="email"
+                  placeholder="Tu email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                  className="flex-1 rounded-full bg-slate-800 px-4 py-2.5 text-sm text-white placeholder-white/40 outline-none transition-colors focus:ring-2 focus:ring-[#ee9d2b]"
+                />
+                <button
+                  type="submit"
+                  className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#ee9d2b] transition-colors hover:bg-[#d68a1e]"
+                >
+                  <Send size={16} />
+                </button>
+              </div>
 
               {/* Success message */}
               {enviado && (
-                <p className="text-center text-sm text-emerald-400">
+                <p className="mt-3 text-center text-sm text-emerald-400">
                   ¡Gracias por suscribirte!
                 </p>
               )}
             </form>
           </div>
         </div>
-      </div>
 
-      {/* Bottom bar */}
-      <div className="border-t border-gray-800">
-        <div className="mx-auto max-w-7xl px-4 py-5 sm:px-6 lg:px-8">
-          <p className="text-center text-sm text-gray-500">
+        {/* Bottom bar */}
+        <div className="flex flex-col items-center justify-between gap-4 border-t border-white/10 pt-8 sm:flex-row">
+          <p className="text-xs text-white/40">
             &copy; 2026 PetShop. Todos los derechos reservados.
           </p>
+          <div className="flex items-center gap-6">
+            <Link
+              href="/terminos-y-condiciones"
+              className="text-xs text-white/40 transition-colors hover:text-white/70"
+            >
+              Términos y Condiciones
+            </Link>
+            <Link
+              href="/politica-de-cookies"
+              className="text-xs text-white/40 transition-colors hover:text-white/70"
+            >
+              Política de Cookies
+            </Link>
+          </div>
         </div>
       </div>
     </footer>

@@ -1,8 +1,7 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
-import useEmblaCarousel from "embla-carousel-react";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { Dog, Cat } from "lucide-react";
 import type { WCProduct } from "@/lib/types";
 import ProductCard from "@/components/ProductCard";
 
@@ -15,6 +14,15 @@ interface ProductCarouselProps {
   loading?: boolean;
 }
 
+const FILTER_ICONS: Record<string, React.ReactNode> = {
+  perro: <Dog className="h-4 w-4" />,
+  perros: <Dog className="h-4 w-4" />,
+  dog: <Dog className="h-4 w-4" />,
+  gato: <Cat className="h-4 w-4" />,
+  gatos: <Cat className="h-4 w-4" />,
+  cat: <Cat className="h-4 w-4" />,
+};
+
 export default function ProductCarousel({
   title,
   products,
@@ -26,49 +34,12 @@ export default function ProductCarousel({
   const [selectedFilter, setSelectedFilter] = useState(
     activeFilter ?? filterOptions?.[0]?.value ?? ""
   );
-  const [canScrollPrev, setCanScrollPrev] = useState(false);
-  const [canScrollNext, setCanScrollNext] = useState(false);
-
-  const [emblaRef, emblaApi] = useEmblaCarousel({
-    align: "start",
-    slidesToScroll: 1,
-    containScroll: false,
-    breakpoints: {
-      "(max-width: 639px)": { slidesToScroll: 1 },
-      "(min-width: 640px) and (max-width: 1023px)": { slidesToScroll: 2 },
-      "(min-width: 1024px)": { slidesToScroll: 3 },
-    },
-  });
+  const scrollRef = useRef<HTMLDivElement>(null);
 
   // Sync selectedFilter with external activeFilter
   useEffect(() => {
     if (activeFilter !== undefined) setSelectedFilter(activeFilter);
   }, [activeFilter]);
-
-  const updateButtons = useCallback(() => {
-    if (!emblaApi) return;
-    setCanScrollPrev(emblaApi.canScrollPrev());
-    setCanScrollNext(emblaApi.canScrollNext());
-  }, [emblaApi]);
-
-  useEffect(() => {
-    if (!emblaApi) return;
-    emblaApi.on("select", updateButtons);
-    emblaApi.on("reInit", updateButtons);
-    updateButtons();
-    return () => {
-      emblaApi.off("select", updateButtons);
-      emblaApi.off("reInit", updateButtons);
-    };
-  }, [emblaApi, updateButtons]);
-
-  const scrollPrev = useCallback(() => {
-    emblaApi?.scrollPrev();
-  }, [emblaApi]);
-
-  const scrollNext = useCallback(() => {
-    emblaApi?.scrollNext();
-  }, [emblaApi]);
 
   const handleFilterClick = (value: string) => {
     setSelectedFilter(value);
@@ -76,85 +47,79 @@ export default function ProductCarousel({
   };
 
   return (
-    <div className="relative">
+    <div>
       {/* Title */}
-      <h2 className="text-2xl font-bold">{title}</h2>
+      <h2 className="text-3xl font-extrabold text-slate-900">{title}</h2>
 
-      {/* Filter tabs */}
+      {/* Filter toggle pills */}
       {filterOptions && filterOptions.length > 0 && (
-        <div className="mt-3 flex flex-wrap gap-2">
-          {filterOptions.map((option) => (
-            <button
-              key={option.value}
-              onClick={() => handleFilterClick(option.value)}
-              className={`rounded-full px-4 py-1.5 text-sm font-medium transition-colors ${
-                selectedFilter === option.value
-                  ? "bg-emerald-500 text-white"
-                  : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-              }`}
-            >
-              {option.label}
-            </button>
-          ))}
+        <div className="mt-4">
+          <div className="inline-flex items-center gap-1 rounded-full bg-slate-100 p-1.5">
+            {filterOptions.map((option) => {
+              const isSelected = selectedFilter === option.value;
+              const icon = FILTER_ICONS[option.value.toLowerCase()];
+              return (
+                <button
+                  key={option.value}
+                  onClick={() => handleFilterClick(option.value)}
+                  className={`flex items-center gap-2 rounded-full px-6 py-2 font-bold transition-all ${
+                    isSelected
+                      ? "bg-white text-slate-900 shadow-sm"
+                      : "text-slate-500 hover:text-slate-700"
+                  }`}
+                >
+                  {icon && (
+                    <span className={isSelected ? "text-[#ee9d2b]" : ""}>
+                      {icon}
+                    </span>
+                  )}
+                  {option.label}
+                </button>
+              );
+            })}
+          </div>
         </div>
       )}
 
-      {/* Carousel */}
-      <div className="relative mt-4">
+      {/* Products */}
+      <div className="relative mt-6">
         {loading && (
           <div className="flex items-center justify-center py-16">
-            <div className="h-8 w-8 animate-spin rounded-full border-4 border-emerald-500 border-t-transparent" />
+            <div className="h-8 w-8 animate-spin rounded-full border-4 border-[#ee9d2b] border-t-transparent" />
           </div>
         )}
+
         {!loading && products.length === 0 && (
-          <div className="py-16 text-center text-gray-400">No se encontraron productos</div>
+          <div className="py-16 text-center text-slate-400">
+            No se encontraron productos
+          </div>
         )}
+
         {!loading && products.length > 0 && (
-          <>
-            <div className="overflow-hidden" ref={emblaRef}>
-              <div className="-ml-4 flex">
-                {products.map((product) => (
-                  <div
-                    key={product.id}
-                    className="min-w-0 flex-[0_0_66.666%] pl-4 sm:flex-[0_0_33.333%] lg:flex-[0_0_22.222%]"
-                  >
-                    <ProductCard product={product} />
-                  </div>
-                ))}
+          <div
+            ref={scrollRef}
+            className="-mx-4 flex gap-6 overflow-x-auto px-4 pb-8 scrollbar-hide"
+          >
+            {products.map((product) => (
+              <div
+                key={product.id}
+                className="min-w-[280px] flex-shrink-0 md:min-w-[320px]"
+              >
+                <ProductCard product={product} />
+              </div>
+            ))}
+
+            {/* Peek card — skeleton placeholder */}
+            <div className="min-w-[280px] flex-shrink-0 opacity-40 blur-[1px] md:min-w-[320px]">
+              <div className="flex flex-col gap-3 rounded-2xl bg-white p-4">
+                <div className="aspect-square w-full rounded-xl bg-slate-200" />
+                <div className="h-4 w-3/4 rounded-full bg-slate-200" />
+                <div className="h-4 w-1/2 rounded-full bg-slate-200" />
+                <div className="h-8 w-1/3 rounded-full bg-slate-200" />
               </div>
             </div>
-          </>
+          </div>
         )}
-
-        {/* Right fade gradient */}
-        <div className="pointer-events-none absolute right-0 top-0 z-10 h-full w-20 bg-gradient-to-l from-white to-transparent" />
-
-        {/* Navigation arrows */}
-        <button
-          onClick={scrollPrev}
-          disabled={!canScrollPrev}
-          className={`absolute -left-4 top-1/2 z-20 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-white shadow-md transition-opacity ${
-            canScrollPrev
-              ? "opacity-100 hover:bg-gray-50"
-              : "cursor-default opacity-30"
-          }`}
-          aria-label="Anterior"
-        >
-          <ChevronLeft className="h-5 w-5 text-gray-700" />
-        </button>
-
-        <button
-          onClick={scrollNext}
-          disabled={!canScrollNext}
-          className={`absolute -right-4 top-1/2 z-20 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-white shadow-md transition-opacity ${
-            canScrollNext
-              ? "opacity-100 hover:bg-gray-50"
-              : "cursor-default opacity-30"
-          }`}
-          aria-label="Siguiente"
-        >
-          <ChevronRight className="h-5 w-5 text-gray-700" />
-        </button>
       </div>
     </div>
   );

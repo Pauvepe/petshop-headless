@@ -1,102 +1,60 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
-import useEmblaCarousel from "embla-carousel-react";
-import Autoplay from "embla-carousel-autoplay";
 import Image from "next/image";
-
-const slides = [
-  {
-    image: "https://picsum.photos/seed/pet1/1200/500",
-    title: "Todo para tu mascota",
-    subtitle: "Encuentra los mejores productos para consentir a tu compañero fiel",
-  },
-  {
-    image: "https://picsum.photos/seed/pet2/1200/500",
-    title: "Alimentación premium",
-    subtitle: "Las mejores marcas de pienso y comida húmeda con envío rápido",
-  },
-  {
-    image: "https://picsum.photos/seed/pet3/1200/500",
-    title: "Accesorios y juguetes",
-    subtitle: "Haz feliz a tu mascota con nuestra selección de juguetes y accesorios",
-  },
-];
+import { Truck } from "lucide-react";
 
 export default function HeroBanner() {
-  const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true }, [
-    Autoplay({ delay: 4000, stopOnInteraction: false }),
-  ]);
-  const [selectedIndex, setSelectedIndex] = useState(0);
-
-  const onSelect = useCallback(() => {
-    if (!emblaApi) return;
-    setSelectedIndex(emblaApi.selectedScrollSnap());
-  }, [emblaApi]);
-
-  useEffect(() => {
-    if (!emblaApi) return;
-    emblaApi.on("select", onSelect);
-    onSelect();
-    return () => {
-      emblaApi.off("select", onSelect);
-    };
-  }, [emblaApi, onSelect]);
-
-  const scrollTo = useCallback(
-    (index: number) => {
-      if (!emblaApi) return;
-      emblaApi.scrollTo(index);
-    },
-    [emblaApi]
-  );
-
   return (
-    <div className="mx-4">
-      <div className="overflow-hidden rounded-xl" ref={emblaRef}>
-        <div className="flex">
-          {slides.map((slide, index) => (
-            <div key={index} className="min-w-0 flex-[0_0_100%]">
-              <div className="relative aspect-[4/3] md:aspect-[12/5]">
-                <Image
-                  src={slide.image}
-                  alt={slide.title}
-                  fill
-                  className="object-cover"
-                  priority={index === 0}
-                  sizes="(max-width: 768px) 100vw, 100vw"
-                />
-                {/* Overlay */}
-                <div className="absolute inset-0 bg-black/40" />
-                {/* Text content */}
-                <div className="absolute inset-0 flex flex-col items-center justify-center px-6 text-center text-white">
-                  <h2 className="mb-2 text-2xl font-bold md:text-4xl lg:text-5xl">
-                    {slide.title}
-                  </h2>
-                  <p className="max-w-xl text-sm md:text-lg lg:text-xl">
-                    {slide.subtitle}
-                  </p>
-                </div>
+    <div className="container mx-auto px-4 py-8">
+      <div className="rounded-2xl overflow-hidden bg-gradient-to-br from-[#ee9d2b]/20 via-[#ee9d2b]/10 to-transparent">
+        <div className="grid md:grid-cols-2 items-center">
+          {/* Left side - Text */}
+          <div className="p-8 md:p-16 space-y-6">
+            <span className="inline-block px-4 py-1 bg-[#ee9d2b]/20 text-[#ee9d2b] font-bold rounded-full text-sm uppercase tracking-widest">
+              Nueva Temporada
+            </span>
+            <h1 className="text-4xl md:text-6xl font-extrabold text-slate-900 leading-tight">
+              Todo lo que tu mascota necesita.
+            </h1>
+            <p className="text-lg text-slate-600 max-w-md">
+              Descubre descuentos increíbles de hasta el 40% en las mejores
+              marcas para tu mejor amigo.
+            </p>
+            <div className="flex flex-wrap gap-4">
+              <button className="px-8 py-4 bg-[#ee9d2b] text-white font-bold rounded-full hover:scale-105 transition-transform shadow-lg shadow-[#ee9d2b]/30">
+                Explorar ofertas
+              </button>
+              <button className="px-8 py-4 bg-white text-slate-900 font-bold rounded-full border-2 border-slate-100 hover:scale-105 transition-transform">
+                Nuevos ingresos
+              </button>
+            </div>
+          </div>
+
+          {/* Right side - Image */}
+          <div className="relative h-64 md:h-[500px]">
+            <Image
+              src="https://picsum.photos/seed/petshop-hero/800/600"
+              alt="Mascota feliz"
+              fill
+              className="object-cover"
+              priority
+              sizes="(max-width: 768px) 100vw, 50vw"
+            />
+
+            {/* Floating card */}
+            <div className="bg-white/80 backdrop-blur-md p-4 rounded-xl absolute bottom-4 left-4 right-4 flex items-center gap-4">
+              <div className="bg-[#86b049] rounded-full w-12 h-12 flex items-center justify-center flex-shrink-0">
+                <Truck className="w-6 h-6 text-white" />
+              </div>
+              <div>
+                <p className="font-bold text-slate-900">Envío Gratis</p>
+                <p className="text-sm text-slate-600">
+                  En pedidos mayores a 39&euro;
+                </p>
               </div>
             </div>
-          ))}
+          </div>
         </div>
-      </div>
-
-      {/* Navigation dots */}
-      <div className="mt-3 flex justify-center gap-2">
-        {slides.map((_, index) => (
-          <button
-            key={index}
-            onClick={() => scrollTo(index)}
-            className={`h-2.5 w-2.5 rounded-full transition-colors ${
-              index === selectedIndex
-                ? "bg-emerald-500"
-                : "bg-gray-300 hover:bg-gray-400"
-            }`}
-            aria-label={`Ir a diapositiva ${index + 1}`}
-          />
-        ))}
       </div>
     </div>
   );
